@@ -31,7 +31,32 @@ rule-anchor:
   domain_text: &domain_text {type: http, interval: 86400, behavior: domain, format: text}
 
 proxy-providers:
-  HH: {<<: *P, url: "订阅URL"}
+  # 每个机场一个独立 provider，避免 |合并多订阅在某些内核版本拉取403
+  # 全部节点由分组 include-all 自动合并，filter正则按国家分流
+  baokemeng:
+    <<: *P
+    url: "https://link123.52pokemon66.cc/api/v1/client/subscribe?token=1c3f15fb2294b711a70755ce9d440208"
+  crvesoft:
+    <<: *P
+    url: "https://ps5.crvesoft.top/s/21e2afda1bb13c40917fc483c0d20d4c"
+  mxlsub:
+    <<: *P
+    url: "https://mxlsub.qzz.io/free"
+  xingshuo:
+    <<: *P
+    url: "https://subscheck.bpm.de5.net/sub/xingshuo/mihomo.yaml"
+  qzz234:
+    <<: *P
+    url: "https://234.qzz.io/fsllistyaml"
+  mcii:
+    <<: *P
+    url: "https://proxy.mcii.cc/sub/e8a01cc99f12d8b7f1f34148f3fdd120"
+  sublink:
+    <<: *P
+    url: "https://url.v1.mk/sub?target=clash&url=https%3A%2F%2Fapp.sublink.works%2Fx%2FJuYjbah&insert=false&config=https%3A%2F%2Fraw.githubusercontent.com%2Fcmliu%2FACL4SSR%2Fmain%2FClash%2Fconfig%2FACL4SSR_Online.ini&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=false&fdn=false&new_name=true"
+  purens:
+    <<: *P
+    url: "https://purens.qzz.io/fslyamlccs?ddbce8f25083a65a17f0ed48"
 
 proxies:
   - {name: 直连, type: direct, udp: true}
@@ -198,8 +223,8 @@ rules:
   - MATCH,漏网之鱼
 
 rule-providers:
-  fakeipfilter_cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-cn.list"}
-  fakeipfilter_!cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-!cn.list"}
+  fakeipfilter_cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/xxyyht-design/rule/refs/heads/main/rules/fakeipfilter-cn.list"}
+  fakeipfilter_!cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/xxyyht-design/rule/refs/heads/main/rules/fakeipfilter-!cn.list"}
   private_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"}
   ai_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"}
   youtube_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"}
