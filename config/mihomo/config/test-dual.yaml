@@ -1,8 +1,10 @@
 # ============================================
-# linuxdo + baokemeng 双机场合并配置
-# 基于 linuxdo 规则骨架(10300条) 重构为机场嵌套分组
-# 顶层节点选择 → (crvesoft / baokemeng) 机场组 × 自动测速
-# 各平台分流组保留 linuxdo 命名与规则绑定
+# linuxdo + baokemeng 双机场合并配置 v3
+# 两个机场节点【全部内嵌进文件】（学 linuxdo 做法，彻底稳定）
+#   - crvesoft 19 节点（来自 linuxdo 原配置）
+#   - baokemeng 26 节点（剔除6个假节点）
+# 不再依赖外部订阅接口 → 节点永远不会空
+# 规则沿用 linuxdo 10312 条
 # ============================================
 
 # ---------- 全局 ----------
@@ -20,31 +22,554 @@ dns:
     nameserver: [119.29.29.29, 223.5.5.5]
     fallback: [8.8.8.8, 8.8.4.4, 'tls://1.0.0.1:853', 'tls://dns.google:853']
 
-# ---------- 机场订阅 ----------
-proxy-providers:
-  crvesoft:
-    type: http
-    url: "https://ps5.crvesoft.top/s/21e2afda1bb13c40917fc483c0d20d4c"
-    interval: 3600
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
-    exclude-filter: "剩余|流量|套餐|到期|官网|建议|距离下次|放丢失|订阅"
-    path: ./providers/crvesoft.yaml
-  baokemeng:
-    type: http
-    url: "https://link123.52pokemon66.cc/api/v1/client/subscribe?token=1c3f15fb2294b711a70755ce9d440208"
-    interval: 3600
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
-    exclude-filter: "剩余|流量|套餐|到期|官网|建议|距离下次|放丢失|订阅"
-    path: ./providers/baokemeng.yaml
-
-# 不自行定义 DIRECT/REJECT（mihomo内置保留名），直接在分组引用
-proxies: []
+# ---------- 全部节点内嵌（crvesoft 19 + baokemeng 26 = 45）----------
+proxies:
+  - name: 🇸🇬SG-Reality
+    type: vless
+    server: 140.245.39.56
+    port: 10172
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: false
+    servername: www.nvidia.com
+    reality-opts:
+      public-key: JP7dDbEK9MGkKXRVwS1zU8qYZzmH9uFVicoykC5_GHg
+      short-id: ca9a766da4
+    client-fingerprint: ios
+  - name: 🇸🇬SG-Vmess(Aws1)
+    type: vmess
+    server: 52.76.131.161
+    port: 5443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0415sgw2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0415sgw2.crvesoft.me
+  - name: 🇸🇬SG-Vmess(Aws2)
+    type: vmess
+    server: 13.251.168.66
+    port: 8443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0415sgw2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0415sgw2.crvesoft.me
+  - name: 🇸🇬SG-Vmess(Ten)
+    type: vmess
+    server: 119.91.250.115
+    port: 10016
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0415sgw2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0415sgw2.crvesoft.me
+  - name: 🇯🇵JP-Reality
+    type: vless
+    server: 161.33.17.67
+    port: 54984
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    flow: null
+    tls: true
+    skip-cert-verify: false
+    servername: www.nvidia.com
+    reality-opts:
+      public-key: qZ1WWJhiLjlbB-4JKRK5nmiqL_f3mjxjv0yYBKuM2EM
+      short-id: 4e90fa
+    client-fingerprint: chrome
+  - name: 🇯🇵JP-Vmess1(Aws)
+    type: vmess
+    server: 176.34.12.152
+    port: 8443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0728jp2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0728jp2.crvesoft.me
+  - name: 🇯🇵JP-Vmess1(Sak)
+    type: vmess
+    server: 152.175.36.105
+    port: 61850
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0728jp2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0728jp2.crvesoft.me
+  - name: 🇯🇵JP-Vmess2(Bwh)
+    type: vmess
+    server: 80.251.212.133
+    port: 12345
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: jptls0716.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: jptls0716.crvesoft.top
+  - name: 🇯🇵JP-Vmess2(Xtom)
+    type: vmess
+    server: 45.143.131.231
+    port: 30000
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: jptls0716.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: jptls0716.crvesoft.top
+  - name: 🇺🇸US-Reality
+    type: vless
+    server: 192.18.133.116
+    port: 33147
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: false
+    servername: www.nvidia.com
+    reality-opts:
+      public-key: S32hJR7JbRvsvFGAlCH4w8jFIqM98h1AplQ4WVhM0VU
+      short-id: '9676'
+    client-fingerprint: firefox
+  - name: 🇺🇸US-Vmess1(Zo)
+    type: vmess
+    server: 207.57.141.113
+    port: 9443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: ustls260619.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: ustls260619.crvesoft.top
+  - name: 🇺🇸US-Vmess1(Bwh)
+    type: vmess
+    server: 64.186.230.58
+    port: 3106
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: ustls260619.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: ustls260619.crvesoft.top
+  - name: 🇺🇸US-Vmess2(Bwh)
+    type: vmess
+    server: 144.34.230.153
+    port: 9003
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0409us2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0409us2.crvesoft.me
+  - name: 🇺🇸US-Vmess2(Dmit)
+    type: vmess
+    server: 154.17.227.99
+    port: 12345
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: 0409us2.crvesoft.me
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: 0409us2.crvesoft.me
+  - name: 🇩🇪DE-Vmess(Xtom)
+    type: vmess
+    server: 178.22.26.225
+    port: 443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: detls1201.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: detls1201.crvesoft.top
+  - name: 🇩🇪DE-Vmess(NL)
+    type: vmess
+    server: 162.211.230.42
+    port: 8688
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: detls1201.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: detls1201.crvesoft.top
+  - name: 🇭🇰HK-Reality
+    type: vless
+    server: 38.22.88.221
+    port: 28179
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: false
+    servername: www.nvidia.com
+    reality-opts:
+      public-key: fXtw0HgOqET6yUtLiiZ3WXFi_WQ_ys2zbjKpsutPXkc
+      short-id: abe3
+    client-fingerprint: edge
+  - name: 🇭🇰HK-Warp(Zou)
+    type: vmess
+    server: 167.148.203.46
+    port: 10000
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: hkv1f1201.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: hkv1f1201.crvesoft.top
+  - name: 🇭🇰HK-Warp(Ten)
+    type: vmess
+    server: 101.32.178.188
+    port: 8443
+    uuid: d54bfaa4-06f4-4083-aa77-7d5469c0add6
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: false
+    servername: hkv1f1201.crvesoft.top
+    network: ws
+    ws-opts:
+      path: /
+      headers:
+        Host: hkv1f1201.crvesoft.top
+  - name: 🇭🇰【亚洲】香港01丨直连
+    server: 209.9.200.33
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: d1.awsstatic.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇭🇰【亚洲】香港02丨直连
+    server: 209.9.200.33
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: d1.awsstatic.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇭🇰【亚洲】香港03丨直连
+    server: hk01.poke-mon.xyz
+    port: 8443
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇭🇰【亚洲】香港04丨直连
+    server: hk01.poke-mon.xyz
+    port: 8443
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇭🇰【亚洲】香港05原生丨移动直连
+    type: vless
+    server: 152.175.28.50
+    port: 50133
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: d1.awsstatic.com
+  - name: 🇸🇬【亚洲】新加坡01丨直连
+    server: sg01-hy.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇸🇬【亚洲】新加坡02丨直连
+    server: sg01-hy.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇸🇬【亚洲】新加坡03丨直连
+    server: sg02-hy.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇸🇬【亚洲】新加坡04丨直连
+    server: sg02-hy.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: www.bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇸🇬 【亚洲】新加坡01丨Vless
+    type: vless
+    server: vless-sg01.waimaosass.icu
+    port: 50131
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: d1.awsstatic.com
+  - name: 🇸🇬 【亚洲】新加坡02丨Vless
+    type: vless
+    server: vless-sg02.waimaosass.icu
+    port: 50131
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: ios
+    servername: d1.awsstatic.com
+  - name: 🇯🇵【亚洲】日本01丨Vless
+    type: vless
+    server: vless-jp01.waimaosass.icu
+    port: 50131
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: d1.awsstatic.com
+  - name: 🇯🇵【亚洲】日本02丨Vless
+    type: vless
+    server: vless-jp02.waimaosass.icu
+    port: 50131
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: d1.awsstatic.com
+  - name: 🇯🇵【亚洲】日本03丨Vless
+    type: vless
+    server: vless-jp03.waimaosass.icu
+    port: 50131
+    uuid: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    flow: xtls-rprx-vision
+    tls: true
+    skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: d1.awsstatic.com
+  - name: 🇺🇸【北美洲】美国01原生丨直连【2x】
+    server: us01zl.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇺🇸【北美洲】美国02原生丨直连【2x】
+    server: us01zl.poke-mon.xyz
+    port: 20000
+    ports: 20000-50000
+    mport: 20000-50000
+    udp: true
+    skip-cert-verify: true
+    sni: bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇺🇸【北美洲】美国03原生丨直连【2x】
+    server: us02zl.poke-mon.xyz
+    port: 443
+    udp: true
+    skip-cert-verify: true
+    sni: bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇺🇸【北美洲】美国04原生丨直连【2x】
+    server: us02zl.poke-mon.xyz
+    port: 443
+    udp: true
+    skip-cert-verify: true
+    sni: bing.com
+    type: hysteria2
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+  - name: 🇭🇰【亚洲】香港01丨V6【1x】
+    type: trojan
+    server: ptxlv6-01.waimaosass.icu
+    port: 54357
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.lamer.com.hk
+    skip-cert-verify: true
+  - name: 🇭🇰【亚洲】香港02丨V6【1x】
+    type: trojan
+    server: ptxlv6-02.waimaosass.icu
+    port: 54357
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.lamer.com.hk
+    skip-cert-verify: true
+  - name: 🇸🇬【亚洲】新加坡07丨V6【1x】
+    type: trojan
+    server: ptxlv6-01.waimaosass.icu
+    port: 54258
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
+  - name: 🇸🇬【亚洲】新加坡08丨V6【1x】
+    type: trojan
+    server: ptxlv6-02.waimaosass.icu
+    port: 54258
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
+  - name: 🇯🇵【亚洲】日本01丨V6【1x】
+    type: trojan
+    server: ptxlv6-01.waimaosass.icu
+    port: 54261
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
+  - name: 🇯🇵【亚洲】日本02丨V6【1x】
+    type: trojan
+    server: ptxlv6-02.waimaosass.icu
+    port: 54261
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
+  - name: 🇺🇸【北美洲】美国01丨V6【1x】
+    type: trojan
+    server: ptxlv6-01.waimaosass.icu
+    port: 54273
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
+  - name: 🇺🇸【北美洲】美国02丨V6【1x】
+    type: trojan
+    server: ptxlv6-02.waimaosass.icu
+    port: 54273
+    password: 06166af8-48f1-4d02-ba60-5524701ce340
+    udp: true
+    sni: www.bing.com
+    skip-cert-verify: true
 
 # ---------- 分组 ----------
 proxy-groups:
@@ -59,26 +584,41 @@ proxy-groups:
      proxies: ["🏢 crvesoft", "🏢 baokemeng"], include-all: true}
 
   - {name: 🚀 手动切换, type: select,
-     proxies: ["🏢 crvesoft", "🏢 baokemeng"], include-all: true,
-     use: [crvesoft, baokemeng]}
+     proxies: ["🏢 crvesoft", "🏢 baokemeng"], include-all: true}
 
   - {name: 🔮 负载均衡, type: load-balance, strategy: consistent-hashing,
      url: 'http://www.gstatic.com/generate_204', interval: 300, tolerance: 50,
-     use: [crvesoft, baokemeng]}
+     include-all: true, proxies: ["🏢 crvesoft", "🏢 baokemeng"]}
 
-  # ===== 机场层：crvesoft =====
+  # ===== 机场层：crvesoft（内嵌 19 节点）=====
   - {name: "🏢 crvesoft", type: select,
-     proxies: ["🏢 crvesoft 自动"], use: [crvesoft]}
+     proxies: ["🏢 crvesoft 自动", 🇸🇬SG-Reality, 🇸🇬SG-Vmess(Aws1), 🇸🇬SG-Vmess(Aws2), 🇸🇬SG-Vmess(Ten),
+               🇯🇵JP-Reality, 🇯🇵JP-Vmess1(Aws), 🇯🇵JP-Vmess1(Sak), 🇯🇵JP-Vmess2(Bwh), 🇯🇵JP-Vmess2(Xtom),
+               🇺🇸US-Reality, 🇺🇸US-Vmess1(Zo), 🇺🇸US-Vmess1(Bwh), 🇺🇸US-Vmess2(Bwh), 🇺🇸US-Vmess2(Dmit),
+               🇩🇪DE-Vmess(Xtom), 🇩🇪DE-Vmess(NL), 🇭🇰HK-Reality, 🇭🇰HK-Warp(Zou), 🇭🇰HK-Warp(Ten)]}
   - {name: "🏢 crvesoft 自动", type: url-test,
      url: 'http://www.gstatic.com/generate_204', interval: 300, tolerance: 50,
-     use: [crvesoft]}
+     proxies: [🇸🇬SG-Reality, 🇸🇬SG-Vmess(Aws1), 🇸🇬SG-Vmess(Aws2), 🇸🇬SG-Vmess(Ten),
+               🇯🇵JP-Reality, 🇯🇵JP-Vmess1(Aws), 🇯🇵JP-Vmess1(Sak), 🇯🇵JP-Vmess2(Bwh), 🇯🇵JP-Vmess2(Xtom),
+               🇺🇸US-Reality, 🇺🇸US-Vmess1(Zo), 🇺🇸US-Vmess1(Bwh), 🇺🇸US-Vmess2(Bwh), 🇺🇸US-Vmess2(Dmit),
+               🇩🇪DE-Vmess(Xtom), 🇩🇪DE-Vmess(NL), 🇭🇰HK-Reality, 🇭🇰HK-Warp(Zou), 🇭🇰HK-Warp(Ten)]}
 
-  # ===== 机场层：baokemeng =====
+  # ===== 机场层：baokemeng（内嵌 26 节点）=====
   - {name: "🏢 baokemeng", type: select,
-     proxies: ["🏢 baokemeng 自动"], use: [baokemeng]}
+     proxies: ["🏢 baokemeng 自动", 🇭🇰【亚洲】香港01丨直连, 🇭🇰【亚洲】香港02丨直连, 🇭🇰【亚洲】香港03丨直连, 🇭🇰【亚洲】香港04丨直连,
+               🇭🇰【亚洲】香港05原生丨移动直连, 🇸🇬【亚洲】新加坡01丨直连, 🇸🇬【亚洲】新加坡02丨直连, 🇸🇬【亚洲】新加坡03丨直连, 🇸🇬【亚洲】新加坡04丨直连,
+               🇸🇬 【亚洲】新加坡01丨Vless, 🇸🇬 【亚洲】新加坡02丨Vless, 🇯🇵【亚洲】日本01丨Vless, 🇯🇵【亚洲】日本02丨Vless, 🇯🇵【亚洲】日本03丨Vless,
+               🇺🇸【北美洲】美国01原生丨直连【2x】, 🇺🇸【北美洲】美国02原生丨直连【2x】, 🇺🇸【北美洲】美国03原生丨直连【2x】, 🇺🇸【北美洲】美国04原生丨直连【2x】,
+               🇭🇰【亚洲】香港01丨V6【1x】, 🇭🇰【亚洲】香港02丨V6【1x】, 🇸🇬【亚洲】新加坡07丨V6【1x】, 🇸🇬【亚洲】新加坡08丨V6【1x】,
+               🇯🇵【亚洲】日本01丨V6【1x】, 🇯🇵【亚洲】日本02丨V6【1x】, 🇺🇸【北美洲】美国01丨V6【1x】, 🇺🇸【北美洲】美国02丨V6【1x】]}
   - {name: "🏢 baokemeng 自动", type: url-test,
      url: 'http://www.gstatic.com/generate_204', interval: 300, tolerance: 50,
-     use: [baokemeng]}
+     proxies: [🇭🇰【亚洲】香港01丨直连, 🇭🇰【亚洲】香港02丨直连, 🇭🇰【亚洲】香港03丨直连, 🇭🇰【亚洲】香港04丨直连,
+               🇭🇰【亚洲】香港05原生丨移动直连, 🇸🇬【亚洲】新加坡01丨直连, 🇸🇬【亚洲】新加坡02丨直连, 🇸🇬【亚洲】新加坡03丨直连, 🇸🇬【亚洲】新加坡04丨直连,
+               🇸🇬 【亚洲】新加坡01丨Vless, 🇸🇬 【亚洲】新加坡02丨Vless, 🇯🇵【亚洲】日本01丨Vless, 🇯🇵【亚洲】日本02丨Vless, 🇯🇵【亚洲】日本03丨Vless,
+               🇺🇸【北美洲】美国01原生丨直连【2x】, 🇺🇸【北美洲】美国02原生丨直连【2x】, 🇺🇸【北美洲】美国03原生丨直连【2x】, 🇺🇸【北美洲】美国04原生丨直连【2x】,
+               🇭🇰【亚洲】香港01丨V6【1x】, 🇭🇰【亚洲】香港02丨V6【1x】, 🇸🇬【亚洲】新加坡07丨V6【1x】, 🇸🇬【亚洲】新加坡08丨V6【1x】,
+               🇯🇵【亚洲】日本01丨V6【1x】, 🇯🇵【亚洲】日本02丨V6【1x】, 🇺🇸【北美洲】美国01丨V6【1x】, 🇺🇸【北美洲】美国02丨V6【1x】]}
 
   # ===== 平台分流（保留 linuxdo 命名/规则绑定）=====
   - {name: 📲 电报消息, type: select, proxies: [🚀 节点选择]}
